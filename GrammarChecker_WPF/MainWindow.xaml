@@ -84,6 +84,7 @@
                     <StackPanel>
                         <TextBox Name="TextEditor"
                                  actb:AutoCompleteBehavior.AutoCompleteEnabled="True"
+                                 actb:AutoCompleteBehavior.Dictionary="{Binding Dictionary}"
                                  FontFamily="{Binding ElementName=fontSelector,Path=SelectedItem.Source}"
                                  FontStretch="{Binding SelectedItem.Stretch, ElementName=typefaceSelector}"
                                  FontStyle="{Binding SelectedItem.Style, ElementName=typefaceSelector}"

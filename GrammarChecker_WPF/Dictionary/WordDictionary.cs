@@ -43,6 +43,7 @@ namespace GrammarChecker_WPF
 
     static class WordDictionary
     {
+        public static HashSet<string> HashSet = new HashSet<string>();
         private static SortedList<char, List<DictionaryItem>> dictionary;
         private static string path =
             @"C:\Users\nnuda\source\repos\LABS_sem5\GrammarChecker_WPF\GrammarChecker_WPF\Dictionary\WordDictionary.txt";
@@ -69,7 +70,7 @@ namespace GrammarChecker_WPF
                         var newList = new List<DictionaryItem>();
                         dictionary.Add(firstLetter, newList);
                     }
-
+                    HashSet.Add(word);
                     dictionary[firstLetter].Add(new DictionaryItem(word, frequency));
                 }
             }

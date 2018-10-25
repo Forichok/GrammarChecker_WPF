@@ -16,7 +16,7 @@ namespace GrammarChecker_WPF.ViewModels
     class MainViewModel:ViewModelBase
     {
         public ObservableCollection<IncorrectWordViewModel> IncorrectWords { get; set; }
-
+        public HashSet<string> Dictionary => WordDictionary.HashSet;
 
         public string Text { get; set; }
        

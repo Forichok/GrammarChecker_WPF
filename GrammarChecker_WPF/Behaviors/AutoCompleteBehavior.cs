@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GrammarChecker_WPF.ViewModels;
+using ThicknessConverter = Xceed.Wpf.DataGrid.Converters.ThicknessConverter;
 
 
 namespace GrammarChecker_WPF.AutoCompleteTextBox
@@ -32,11 +33,21 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
                 typeof(bool), typeof(AutoCompleteBehavior),
                 new PropertyMetadata(false, OnAutoComplete));
 
+        public static readonly DependencyProperty AutoCompleteDictionaryProperty =
+            DependencyProperty.RegisterAttached("Dictionary",
+                typeof(IEnumerable<string>), typeof(AutoCompleteBehavior),
+                new UIPropertyMetadata(null, OnIncorrectWordFound));
+
+        private static void OnIncorrectWordFound(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
         #region Items Source
 
         public static bool GetAutoCompleteEnabled(DependencyObject obj)
         {
-            return (bool) obj.GetValue(AutoCompleteEnabledProperty);
+            return (bool)obj.GetValue(AutoCompleteEnabledProperty);
         }
 
         public static void SetAutoCompleteEnabled(DependencyObject obj,
@@ -45,6 +56,21 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
             obj.SetValue(AutoCompleteEnabledProperty, value);
         }
 
+        public static IEnumerable<string> GetDictionary(DependencyObject obj)
+        {
+            object objRtn = obj.GetValue(AutoCompleteDictionaryProperty);
+            if (objRtn is IEnumerable<string>)
+                return (objRtn as IEnumerable<string>);
+
+            return new ObservableCollection<string>();
+        }
+
+
+
+        public static void SetDictionary(DependencyObject obj, IEnumerable<string> value)
+        {
+            obj.SetValue(AutoCompleteDictionaryProperty, value);
+        }
         private static void OnAutoComplete(object sender, DependencyPropertyChangedEventArgs e)
         {
             TextBox tb = sender as TextBox;
@@ -117,7 +143,7 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
 
             matchingString = GetCurrentWord(tb.Text, tb.CaretIndex);
 
-            HintWords = new List<string>(WordDictionary.GetWordContinuations(matchingString));
+            HintWords = GetWordContinuations(tb,matchingString);
 
             if (!HintWords.Any())
             {
@@ -162,7 +188,18 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
         }
 
         #region Helper Methods
-
+        private static List<string> GetWordContinuations(DependencyObject obj, string word)
+        {
+            var continuationWords = new List<string>();
+            
+                foreach (var wordFromDictionary in GetDictionary(obj))
+                {
+                    if (continuationWords.Count >= 100) return continuationWords;
+                    if (wordFromDictionary.StartsWith(word))
+                        continuationWords.Add(wordFromDictionary);
+                }
+            return continuationWords;
+        }
         private static string GetCurrentWord(string text, int index)
         {
             var word = "";
