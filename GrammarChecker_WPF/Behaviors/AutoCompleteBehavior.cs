@@ -32,16 +32,6 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
                 typeof(bool), typeof(AutoCompleteBehavior),
                 new PropertyMetadata(false, OnAutoComplete));
 
-        public static readonly DependencyProperty AutoCompleteIncorrectWordsProperty =
-            DependencyProperty.RegisterAttached("IncorrectWords",
-                typeof(IEnumerable<IncorrectWordViewModel>), typeof(AutoCompleteBehavior),
-                new UIPropertyMetadata(null, OnIncorrectWordFound));
-
-        private static void OnIncorrectWordFound(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-           
-        }
-
         #region Items Source
 
         public static bool GetAutoCompleteEnabled(DependencyObject obj)
@@ -55,72 +45,22 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
             obj.SetValue(AutoCompleteEnabledProperty, value);
         }
 
-        public static IEnumerable<IncorrectWordViewModel> GetIncorrectWords(DependencyObject obj)
-        {
-            object objRtn = obj.GetValue(AutoCompleteIncorrectWordsProperty);
-            if (objRtn is IEnumerable<IncorrectWordViewModel>)
-                return (objRtn as IEnumerable<IncorrectWordViewModel>);
-
-            return new ObservableCollection<IncorrectWordViewModel>();
-        }
-
-        
-
-        public static void SetIncorrectWords(DependencyObject obj, IEnumerable<IncorrectWordViewModel> value)
-        {
-            obj.SetValue(AutoCompleteIncorrectWordsProperty, value);
-        }
-
         private static void OnAutoComplete(object sender, DependencyPropertyChangedEventArgs e)
         {
             TextBox tb = sender as TextBox;
             if (sender == null)
                 return;
 
-            //If we're being removed, remove the callbacks
-            //Remove our old handler, regardless of if we have a new one.
             tb.TextChanged -= onTextChanged;
             tb.PreviewKeyDown -= onKeyDown;
             if (e.NewValue != null)
             {
-                //New source.  Add the callbacks
                 tb.TextChanged += onTextChanged;
                 tb.PreviewKeyDown += onKeyDown;
             }
         }
 
         #endregion
-
-
-
-
-
-        static void CheckGrammar(object obj,string str)
-        {
-
-            TextBox tb = obj as TextBox;
-
-            if (tb == null)
-                return;
-            var words = str.Split();
-            var items = new ObservableCollection<IncorrectWordViewModel>();
-            textBox = tb;
-            foreach (var word in words)
-            {
-                var incorrectWord= new IncorrectWordViewModel(word);
-                if (!WordDictionary.Contains(word))
-                {
-                    if (!items.Contains(incorrectWord))
-                    {
-                        incorrectWord.WordChanged += ChangeText;
-                        items.Add(incorrectWord);
-                    }
-                }
-            }
-            SetIncorrectWords(tb, items);
-        }
-
-    
 
         static void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -130,11 +70,6 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
 
             if (tb == null)
                 return;
-
-            if (e.Key == Key.Enter || e.Key == Key.Space)
-            {
-                CheckGrammar(tb,tb.Text);
-            }
 
             if (e.Key == Key.RightAlt && GetCurrentWord(tb.Text,tb.CaretIndex).StartsWith(matchingString))
             {
@@ -169,7 +104,7 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
             ) // procs on bacspace 
                 return;
 
-            TextBox tb = e.OriginalSource as TextBox;
+            var tb = e.OriginalSource as TextBox;
 
             if(tb != null && tb.Text.EndsWith(" ")) 
                 return;
@@ -194,7 +129,7 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
             if (String.IsNullOrEmpty(matchingString))
                 return;
 
-            Int32 wordLength = matchingString.Length;
+            var wordLength = matchingString.Length;
 
             match =
             (
@@ -214,7 +149,7 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
             if (String.IsNullOrEmpty(match))
                 return;
 
-            int matchStart = (CurrentWordPosition + matchingString.Length);
+            var matchStart = CurrentWordPosition + matchingString.Length;
 
             tb.TextChanged -= onTextChanged;
             tb.Text = tb.Text.Insert(tb.CaretIndex, match);
@@ -249,15 +184,13 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
         private static int GetWordStartPosition(string text, int index)
         {
             if (index == 0) return 0;
-            for (int i = index - 1; i > 0; i--)
+            for (var i = index - 1; i > 0; i--)
             {
-                if (text[i] == ' ' || text[i] == '\r' || text[i] == '\n' || text[i] == '\t')
+                   if(char.IsSeparator(text[i]))
                 {
                     return i + 1;
                 }
-
             }
-
             return 0;
         }
 
@@ -270,21 +203,13 @@ namespace GrammarChecker_WPF.AutoCompleteTextBox
             return text;
         }
 
-
-        private static int currentWordId = 1;
+        private static int _currentWordId = 1;
         private static string GetNextWord()
         {
-            if (currentWordId >= HintWords.Count)
-                currentWordId = 0;
-            return HintWords[currentWordId++];
-        }
-
-        private static void ChangeText(string incorrectWord, string newWord)
-        {
-            
-            textBox.Text = textBox.Text.Replace(incorrectWord, newWord);
-        }
+            if (_currentWordId >= HintWords.Count)
+                _currentWordId = 0;
+            return HintWords[_currentWordId++];
+        }        
         #endregion
-
     }
 }

@@ -83,8 +83,7 @@
                 <Border Background="CadetBlue">
                     <StackPanel>
                         <TextBox Name="TextEditor"
-                                 actb:AutoCompleteBehavior.AutoCompleteEnabled="{Binding ElementName=AutoCorrect, Path=IsChecked}" VerticalAlignment="Top"
-                                 actb:AutoCompleteBehavior.IncorrectWords="{Binding IncorrectWords, Mode=OneWayToSource}"
+                                 actb:AutoCompleteBehavior.AutoCompleteEnabled="True"
                                  FontFamily="{Binding ElementName=fontSelector,Path=SelectedItem.Source}"
                                  FontStretch="{Binding SelectedItem.Stretch, ElementName=typefaceSelector}"
                                  FontStyle="{Binding SelectedItem.Style, ElementName=typefaceSelector}"

@@ -137,12 +137,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\AutoCompleteBehavior.cs" />
-    <Compile Include="AutoCompleteTextBox\AutoCompleteTextBox.cs" />
-    <Compile Include="AutoCompleteTextBox\LimitedCollectionView.cs" />
-    <Compile Include="AutoCompleteTextBox\LimitedListCollectionView.cs" />
-    <Compile Include="AutoCompleteTextBox\ListBoxItemBehavior.cs" />
-    <Compile Include="AutoCompleteTextBox\TemplateSelector.cs" />
-    <Compile Include="AutoCompleteTextBox\TextBoxHelper.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Dictionary\WordDictionary.cs" />
     <Compile Include="ViewModels\IncorrectWordViewModel.cs" />

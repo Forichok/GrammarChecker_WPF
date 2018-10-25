@@ -50,7 +50,6 @@ namespace GrammarChecker_WPF
         static WordDictionary()
         {
             dictionary=new SortedList<char, List<DictionaryItem>>();
-
             LoadDictionary();
 
         }
@@ -136,16 +135,9 @@ namespace GrammarChecker_WPF
                 regexWord.Remove(k, 1);   
                 regexWord.Insert(k, "\\w{1}");
          
-                Regex regex = new Regex(regexWord.ToString());
-                
-                //foreach (var word in list)
-                //{
-                //    if (regex.IsMatch(word.Word) && str.Length == word.Word.Length)
-                //    {
-                //        simularWords.Add(word.Word);
-                //    }
-                //}
-               simularWords.AddRange(from t in list where regex.IsMatch(t.Word) && str.Length == t.Word.Length select t.Word);
+                var regex = new Regex(regexWord.ToString());
+               
+                simularWords.AddRange(from t in list where regex.IsMatch(t.Word) && str.Length == t.Word.Length select t.Word);
             }
             return simularWords;
         }
